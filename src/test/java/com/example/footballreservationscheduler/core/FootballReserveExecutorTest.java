@@ -5,6 +5,9 @@ import com.example.footballreservationscheduler.util.WebDriverUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+
 @SpringBootTest
 class FootballReserveExecutorTest {
 
@@ -12,5 +15,16 @@ class FootballReserveExecutorTest {
     public void executeTest() {
         FootballReserveExecutor executor = new FootballReserveExecutor(WebDriverUtil.getChromeDriver());
         executor.execute(BeanUtil.getBean(FootballReserveInfo.class));
+    }
+
+    @Test
+    public void calculateDateTest() {
+        LocalDate now = LocalDate.now();
+
+        LocalDate oneMonthAfter = now.plusMonths(1);
+        System.out.println("oneMonthAfter = " + oneMonthAfter);
+
+        DayOfWeek dayOfWeekForOneMonthAfter = oneMonthAfter.getDayOfWeek();
+        System.out.println("dayOfWeekForOneMonthAfter = " + dayOfWeekForOneMonthAfter);
     }
 }
