@@ -20,9 +20,15 @@ import java.time.format.DateTimeFormatter;
 public class FootballReserveExecutor {
 
     private final WebDriver webDriver;
+    private final LocalDate now;
+    private final LocalDate targetDate;
+    private final String formattedTargetDate;
 
     public FootballReserveExecutor(WebDriver webDriver) {
         this.webDriver = webDriver;
+        this.now = LocalDate.now();
+        this.targetDate = now.plusMonths(1);
+        this.formattedTargetDate = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public void execute(FootballReserveInfo reserveInfo) {
@@ -31,15 +37,22 @@ public class FootballReserveExecutor {
         try {
             login(reserveInfo);
             reserve(reserveInfo);
-        } catch (Exception e) {
-            log.info("[FootballReserveExecutor] Could not process foot ball reservation!!! Exception -> {}", e);
 
+            log.info("[FootballReserveExecutor] Football reservation completed successfully!!!");
+            sendSuccessMail();
+        } catch (Exception e) {
+
+            log.error("[FootballReserveExecutor] Could not process foot ball reservation!!! Exception -> {}", e);
             sendFailureMail(e);
         } finally {
             WebDriverUtil.quit(webDriver);
         }
+    }
 
-        log.info("[FootballReserveExecutor] Football reservation completed successfully!!!");
+    private void sendSuccessMail() {
+        EmailSendService emailSendService = BeanUtil.getBean(EmailSendService.class);
+        emailSendService.sendMail("Football reservation completed successfully!!!",
+                                  String.format("Reserve Date -> %s", formattedTargetDate));
     }
 
     private void sendFailureMail(Exception e) {
@@ -62,22 +75,19 @@ public class FootballReserveExecutor {
         // 01 시설 및 날짜 선택
         webDriver.get("https://www.seongnam.go.kr/rent/rentParkDataCal.do?menuIdx=1001981&returnURL=%2Fmain.do");
 
-        LocalDate now = LocalDate.now();
-        LocalDate oneMonthAfter = now.plusMonths(1);
-
-        DayOfWeek dayOfWeekForOneMonthAfter = oneMonthAfter.getDayOfWeek();
+        DayOfWeek dayOfWeekForOneMonthAfter = targetDate.getDayOfWeek();
         if (dayOfWeekForOneMonthAfter == DayOfWeek.SATURDAY || dayOfWeekForOneMonthAfter == DayOfWeek.SUNDAY) {
             return;
         }
 
-        int monthDiff = oneMonthAfter.getMonth().getValue() - now.getMonth().getValue();
+        int monthDiff = targetDate.getMonth().getValue() - now.getMonth().getValue();
         for (int i = 0; i < monthDiff; i++) {
             webDriver.findElement(By.id("monthNext")).click();
         }
 
         // 20시~22시로 하드 코딩
         String reserveDateHyperLinkXpath = String.format("//a[contains(@onclick,\"selectWrite('%s', '20'\")]",
-                                                         oneMonthAfter.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+                                                         formattedTargetDate);
         webDriver.findElement(By.xpath(reserveDateHyperLinkXpath)).click();
 
         // 02 이용안내 및 동의
