@@ -1,0 +1,23 @@
+webdriver:
+  id:
+  path:
+
+reserve-info:
+  accountId:  # 성남시 홈페이지 아이디
+  password: # 성남시 홈페이지 패스워드
+  club-name:  # 클럼명
+  reservation-second-phone-num:  # 연락처 두번째 번호
+  reservation-third-phone-num:  # 연락처 세번째 번호
+  participant-count:  # 이용인원
+  club-ceo-name:  # 회장명
+  club-ceo-second-phone-num:  # 회장연락처 두번째 번호
+  club-ceo-third-phone-num:  # 회장연락처 세번째 번호
+  event-plan-doc-location: # 행사계획서 문서 파일 경로
+  participant-list-doc-location: # 참가자명단 문서 파일 경로
+
+notify:
+  receiver-email:
+  smtp:
+    mail:
+      username:
+      password:
