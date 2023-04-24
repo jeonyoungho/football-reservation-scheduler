@@ -24,11 +24,11 @@ public class FootballReserveExecutor {
     private final LocalDate targetDate;
     private final String formattedTargetDate;
 
-    public FootballReserveExecutor(WebDriver webDriver) {
+    public FootballReserveExecutor(WebDriver webDriver, LocalDate now, LocalDate targetDate) {
         this.webDriver = webDriver;
-        this.now = LocalDate.now();
-        this.targetDate = now.plusMonths(1);
-        this.formattedTargetDate = targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        this.now = now;
+        this.targetDate = targetDate;
+        this.formattedTargetDate = this.targetDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
     public void execute(FootballReserveInfo reserveInfo) {

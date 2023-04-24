@@ -13,7 +13,9 @@ class FootballReserveExecutorTest {
 
     @Test
     public void executeTest() {
-        FootballReserveExecutor executor = new FootballReserveExecutor(WebDriverUtil.getChromeDriver());
+        LocalDate now = LocalDate.now();
+        LocalDate targetDate = now.plusMonths(1);
+        FootballReserveExecutor executor = new FootballReserveExecutor(WebDriverUtil.getChromeDriver(), now, targetDate);
         executor.execute(BeanUtil.getBean(FootballReserveInfo.class));
     }
 
