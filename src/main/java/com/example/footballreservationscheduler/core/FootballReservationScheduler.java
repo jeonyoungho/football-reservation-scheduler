@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * Created by jyh1004 on 2023-04-19
@@ -13,11 +14,13 @@ import java.time.LocalDate;
 
 @Component
 public class FootballReservationScheduler {
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(cron = "45 59 8 * * *")
     public void doReserve() {
-        LocalDate now = LocalDate.now();
-        LocalDate targetDate = now.plusMonths(1);
-        FootballReserveExecutor executor = new FootballReserveExecutor(WebDriverUtil.getChromeDriver(), now, targetDate);
+        LocalDate nowDate = LocalDate.now();
+        LocalDate targetDate = nowDate.plusMonths(1);
+        LocalTime reserveStartTime = LocalTime.of(9, 0, 0);
+
+        FootballReserveExecutor executor = new FootballReserveExecutor(WebDriverUtil.getChromeDriver(), nowDate, targetDate, reserveStartTime);
         executor.execute(BeanUtil.getBean(FootballReserveInfo.class));
     }
 }
