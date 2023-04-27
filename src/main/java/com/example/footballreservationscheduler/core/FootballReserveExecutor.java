@@ -37,12 +37,12 @@ public class FootballReserveExecutor {
     }
 
     public void execute(FootballReserveInfo reserveInfo) {
-        log.info("[FootballReserveExecutor] Start foot ball reservation!!! reserveInfo => {}", reserveInfo);
+        log.info("[FootballReserveExecutor] Start foot ball reservation!!! targetDate => {}, reserveInfo => {}", targetDate, reserveInfo);
 
         try {
             login(reserveInfo);
 
-            Thread.sleep(timeUntil(this.nowDate.getYear(), this.nowDate.getMonthValue() - 1, this.nowDate.getDayOfMonth(), 9, 0, 0));
+            Thread.sleep(timeUntil(nowDate.getYear(), nowDate.getMonthValue() - 1, nowDate.getDayOfMonth(), 9, 0, 0));
             log.info("[FootballReserveExecutor] current date time is -> " + LocalDateTime.now());
 
             reserve(reserveInfo);
@@ -101,10 +101,7 @@ public class FootballReserveExecutor {
         // 01 시설 및 날짜 선택
         webDriver.get("https://www.seongnam.go.kr/rent/rentParkDataCal.do?menuIdx=1001981&returnURL=%2Fmain.do");
 
-        DayOfWeek dayOfWeekForOneMonthAfter = targetDate.getDayOfWeek();
-        if (dayOfWeekForOneMonthAfter == DayOfWeek.SATURDAY || dayOfWeekForOneMonthAfter == DayOfWeek.SUNDAY) {
-            return;
-        }
+        if (isHoliday()) return;
 
         int monthDiff = targetDate.getMonth().getValue() - nowDate.getMonth().getValue();
         for (int i = 0; i < monthDiff; i++) {
@@ -146,6 +143,11 @@ public class FootballReserveExecutor {
         webDriver.switchTo().alert().accept();
 
         Thread.sleep(1000);
+    }
+
+    private boolean isHoliday() {
+        DayOfWeek dayOfWeekForOneMonthAfter = targetDate.getDayOfWeek();
+        return dayOfWeekForOneMonthAfter == DayOfWeek.SATURDAY || dayOfWeekForOneMonthAfter == DayOfWeek.SUNDAY;
     }
 
 //    private void reserve(FootballReserveInfo reserveInfo, LocalDateTime reserveStartDateTime) {
